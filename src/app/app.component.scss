@@ -1,0 +1,17 @@
+html,
+body {
+  min-height: 100vh;
+  height: auto;
+  margin: 0;
+  background-color: #f7f7f7;
+}
+
+footer {
+  border-bottom: 4px solid #00a7d1;
+  margin: 0 15px;
+  text-align: center;
+
+  img {
+    margin-bottom: 24px;
+  }
+}
