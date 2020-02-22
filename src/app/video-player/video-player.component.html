@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="content-container">
+    <h4>Moment from meeting with Two Pillars</h4>
+    <!-- 
+      added the click directive to the video placeholder
+      so users can have the ability to click anywhere on the video to pause
+      instead of bein limited to the button itself
+    -->
+    <div class="video-placeholder" (click)="toggleVideo()">
+      <video width="296" height="171" #videoPlayer>
+        <source [src]="videoUrl$ | async" type="video/mp4" />
+        Browser not supported
+      </video>
+      <div [ngClass]="isPlaying ? 'hidden' : 'play-button'">
+        <div class="arrow-right"></div>
+      </div>
+    </div>
+  </div>
+</div>
