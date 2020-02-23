@@ -2,8 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { DataService } from "../services/data.service";
 import { ActivatedRoute } from "@angular/router";
 
-import { Observable } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { Observable, forkJoin, BehaviorSubject } from "rxjs";
+import { switchMap, map } from "rxjs/operators";
+import { Transcript } from "../models/transcript.model";
 
 @Component({
   selector: "app-video-player",
@@ -13,9 +14,12 @@ import { switchMap } from "rxjs/operators";
 export class VideoPlayerComponent implements OnInit {
   @ViewChild("videoPlayer") videoPlayer: ElementRef;
 
-  videoUrl$: Observable<any>;
+  transcripts: Transcript[];
+  trasncript$ = new BehaviorSubject<Transcript>({});
 
+  // variables for video player
   isPlaying: boolean = false;
+  videoContent$: Observable<any>;
 
   constructor(
     private dataService: DataService,
@@ -23,24 +27,70 @@ export class VideoPlayerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    /**
-     * retrieve the id param from the url and use switchMap to pass it
-     * to the data Service when avaiable. pipe async is used in temaplate
-     */
-    this.videoUrl$ = this.activeRoute.queryParamMap.pipe(
+    this.videoContent$ = this.initalize();
+  }
+
+  /**
+   * retrieve the id param from the url and use switchMap to pass it
+   * to the data Service when avaiable. pipe async is used in temaplate
+   * @returns Observable of video
+   */
+  initalize(): Observable<any> {
+    return this.activeRoute.queryParamMap.pipe(
       switchMap(params => {
-        return this.dataService.video(params.get("id"));
+        // check if id is exists, if not throw error and handle accordingly
+        const id = params.get("id");
+        return forkJoin([
+          this.dataService.video(id),
+          this.dataService.transcript(id)
+        ]).pipe(
+          map(([video, transcript]) => {
+            // sort the transcript results by time
+            // and use the initalizers async pipe in the template
+            // to assign this to the local transcript variable
+            this.transcripts = transcript.sort(
+              (a, b) => parseFloat(a.time) - parseFloat(b.time)
+            );
+            return {
+              video: video
+            };
+          })
+        );
       })
     );
   }
+
   /**
    * toggles video playback and sets isPlaying to respected value
    * isPlaying is used to hide/show the play button
    */
   toggleVideo() {
-    this.isPlaying = this.videoPlayer.nativeElement.paused;
+    this.isPlaying =
+      this.videoPlayer.nativeElement.paused ||
+      this.videoPlayer.nativeElement.ended;
     this.isPlaying
       ? this.videoPlayer.nativeElement.play()
       : this.videoPlayer.nativeElement.pause();
+  }
+
+  onTimeUpdate(value) {
+    const currentVideoTime = value.target.currentTime;
+    let speaker: Transcript;
+
+    // loop through entire transcript array to determine if the transcript time is less than currentTime
+    // TODO this is expensive as it will loop through the entire array everytime the time updates. optimize this
+    this.transcripts.forEach(transcript => {
+      if (transcript.time <= currentVideoTime) {
+        speaker = transcript;
+      }
+    });
+
+    this.trasncript$.next(speaker);
+  }
+
+  get fullTranscript(): string {
+    return (
+      this.transcripts.map(transcript => transcript.snippet).join(". ") || ""
+    );
   }
 }

@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://static.chorus.ai/api/"
+  apiUrl: "https://static.chorus.ai/api/",
+  footerImageUrl: "https://static.chorus.ai/images/chorus-logo.svg"
 };
 
 /*

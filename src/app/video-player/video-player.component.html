@@ -1,5 +1,8 @@
 <div class="container">
-  <div class="content-container">
+  <div
+    *ngIf="videoContent$ | async; let content; else: broken"
+    class="content-container"
+  >
     <h4>Moment from meeting with Two Pillars</h4>
     <!-- 
       added the click directive to the video placeholder
@@ -7,13 +10,39 @@
       instead of bein limited to the button itself
     -->
     <div class="video-placeholder" (click)="toggleVideo()">
-      <video width="296" height="171" #videoPlayer>
-        <source [src]="videoUrl$ | async" type="video/mp4" />
-        Browser not supported
+      <video
+        (timeupdate)="onTimeUpdate($event)"
+        width="296"
+        height="171"
+        #videoPlayer
+      >
+        <source [src]="content?.video" type="video/mp4" />
       </video>
       <div [ngClass]="isPlaying ? 'hidden' : 'play-button'">
         <div class="arrow-right"></div>
       </div>
     </div>
+    <div class="transcript-container">
+      <span
+        [ngStyle]="{
+          'border-color':
+            ((trasncript$ | async)?.speaker | lowercase) !== 'cust'
+              ? '#00A7D1'
+              : '#EE6EFF'
+        }"
+        class="speaker-circle"
+      >
+      </span>
+      <div class="transcript-details">
+        <p class="speaker">{{ (trasncript$ | async)?.speaker }}</p>
+        <p class="details small">{{ (trasncript$ | async)?.snippet }}</p>
+        <p class="details">
+          {{ fullTranscript }}
+        </p>
+      </div>
+    </div>
   </div>
+  <ng-template #broken>
+    <h1>Something Went Wrong - Please Ensure You've Entered The Correct ID</h1>
+  </ng-template>
 </div>

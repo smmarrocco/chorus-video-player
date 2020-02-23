@@ -1,24 +1,55 @@
 .container {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+.transcript-container {
+  display: flex;
+  flex-direction: row;
+  margin: 15px 30px 92px 30px;
+  .transcript-details {
+    flex: 0 0 90%;
+    align-self: center;
+  }
 }
 
 .content-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
   width: 824px;
-  height: 521px;
 
   background: #ffffff;
   border: 1px solid #d7dade;
   border-radius: 5px;
 
   h4 {
-    font-family: SFUIText-Regular;
     font-size: 26px;
     color: #333333;
     line-height: 28px;
+    text-align: center;
+  }
+
+  p.details {
+    font-weight: 400;
+    font-size: 15px;
+    color: #333333;
+    line-height: 20px;
+
+    margin: 2px;
+    background-color: #f7f7f7;
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  p.speaker {
+    font-size: 12px;
+    // padding-left to line up speaker
+    // with transcript details
+    padding-left: 15px;
   }
 
   .video-placeholder {
@@ -35,6 +66,15 @@
   }
 }
 
+.speaker-circle {
+  align-self: flex-end;
+  width: 28px;
+  height: 28px;
+  background: rgba(238, 110, 255, 0.1);
+  border: 1px solid;
+  border-radius: 100px;
+}
+
 .play-button {
   position: absolute;
   right: 40%;
@@ -43,7 +83,7 @@
   height: 48px;
   background: #646791;
   border-radius: 3px;
-
+  // css to create the play button right trangle
   .arrow-right {
     position: absolute;
     right: 15px;
@@ -55,7 +95,8 @@
 
     border-left: 15px solid white;
   }
-
+  // for user experince, only apply opacity
+  // when user hovers over play button
   &:hover {
     opacity: 0.8;
   }
@@ -63,4 +104,8 @@
 
 .hidden {
   display: none;
+}
+
+.small {
+  max-width: 250px;
 }
