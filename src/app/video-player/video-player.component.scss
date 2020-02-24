@@ -9,7 +9,7 @@
   align-items: center;
   flex-direction: column;
   width: 824px;
-  height: 521px;
+  height: 550px;
 
   background: #ffffff;
   border: 1px solid #d7dade;
@@ -37,7 +37,8 @@
     font-size: 12px;
     // padding-left to line up speaker
     // with transcript details
-    padding-left: 15px;
+    align-self: flex-start;
+    padding-left: 80px;
   }
 
   .video-placeholder {
