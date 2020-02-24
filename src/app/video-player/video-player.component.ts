@@ -6,11 +6,6 @@ import { Observable, forkJoin, BehaviorSubject, throwError } from "rxjs";
 import { switchMap, map } from "rxjs/operators";
 import { Transcript } from "../models/transcript.model";
 
-export interface Trans {
-  speaker?: string;
-  snippets?: any;
-}
-
 @Component({
   selector: "app-video-player",
   templateUrl: "./video-player.component.html",
@@ -20,7 +15,9 @@ export class VideoPlayerComponent implements OnInit {
   @ViewChild("videoPlayer") videoPlayer: ElementRef;
 
   transcripts: Transcript[];
-  trasncript$ = new BehaviorSubject<Trans>(undefined);
+  trasncript$ = new BehaviorSubject<{ speaker?: string; snippets?: any }>(
+    undefined
+  );
 
   // variables for video player
   isPlaying: boolean = false;
@@ -83,6 +80,11 @@ export class VideoPlayerComponent implements OnInit {
       : this.videoPlayer.nativeElement.pause();
   }
 
+  /**
+   * uses the video player time to determine when the utterence should be
+   * displayed
+   * @param videoTime time of the video player
+   */
   updateTranscript(videoTime: number) {
     this.transcripts.forEach((transcript, index) => {
       if (
@@ -95,6 +97,12 @@ export class VideoPlayerComponent implements OnInit {
     });
   }
 
+  /**
+   * Adds the speaker and snippet value to the Subject that is used
+   * to display the current speaker and snippet
+   * @param speaker string value of the speaker
+   * @param snippet string value of the snippet (utterence)
+   */
   addTranscript(speaker: string, snippet: string) {
     let snippets: string[] = [];
     // check if subject already has values
@@ -122,7 +130,10 @@ export class VideoPlayerComponent implements OnInit {
       snippets: snippets
     });
   }
-
+  /**
+   * Used to get the current time of the video player
+   * @param value the event emitted by video timeupdate
+   */
   onTimeUpdate(value) {
     this.updateTranscript(value.target.currentTime);
   }
