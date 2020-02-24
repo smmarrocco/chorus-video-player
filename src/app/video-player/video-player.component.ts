@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { DataService } from "../services/data.service";
 import { ActivatedRoute } from "@angular/router";
 
-import { Observable, forkJoin, BehaviorSubject } from "rxjs";
+import { Observable, forkJoin, BehaviorSubject, throwError } from "rxjs";
 import { switchMap, map } from "rxjs/operators";
 import { Transcript } from "../models/transcript.model";
 
@@ -15,7 +15,7 @@ export class VideoPlayerComponent implements OnInit {
   @ViewChild("videoPlayer") videoPlayer: ElementRef;
 
   transcripts: Transcript[];
-  trasncript$ = new BehaviorSubject<Transcript>({});
+  trasncript$ = new BehaviorSubject<Transcript>(undefined);
 
   // variables for video player
   isPlaying: boolean = false;
@@ -38,8 +38,12 @@ export class VideoPlayerComponent implements OnInit {
   initalize(): Observable<any> {
     return this.activeRoute.queryParamMap.pipe(
       switchMap(params => {
-        // check if id is exists, if not throw error and handle accordingly
         const id = params.get("id");
+        // if there is no id provided throw an Error
+        // this will trigger the else in the template and got o #broken
+        if (!id) {
+          throwError("ERROR --> No ID Provided");
+        }
         return forkJoin([
           this.dataService.video(id),
           this.dataService.transcript(id)
@@ -63,6 +67,7 @@ export class VideoPlayerComponent implements OnInit {
   /**
    * toggles video playback and sets isPlaying to respected value
    * isPlaying is used to hide/show the play button
+   *
    */
   toggleVideo() {
     this.isPlaying =
@@ -78,7 +83,7 @@ export class VideoPlayerComponent implements OnInit {
     let speaker: Transcript;
 
     // loop through entire transcript array to determine if the transcript time is less than currentTime
-    // TODO this is expensive as it will loop through the entire array everytime the time updates. optimize this
+    // TODO this is expensive as it will loop through the entire array everytime the time updates
     this.transcripts.forEach(transcript => {
       if (transcript.time <= currentVideoTime) {
         speaker = transcript;
@@ -86,11 +91,5 @@ export class VideoPlayerComponent implements OnInit {
     });
 
     this.trasncript$.next(speaker);
-  }
-
-  get fullTranscript(): string {
-    return (
-      this.transcripts.map(transcript => transcript.snippet).join(". ") || ""
-    );
   }
 }

@@ -4,21 +4,9 @@
   align-items: center;
   height: 90vh;
 }
-
-.transcript-container {
-  display: flex;
-  flex-direction: row;
-  margin: 15px 30px 92px 30px;
-  .transcript-details {
-    flex: 0 0 90%;
-    align-self: center;
-  }
-}
-
 .content-container {
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
   width: 824px;
 
@@ -38,7 +26,6 @@
     font-size: 15px;
     color: #333333;
     line-height: 20px;
-
     margin: 2px;
     background-color: #f7f7f7;
     padding: 15px;
@@ -66,13 +53,25 @@
   }
 }
 
+.transcript-container {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+
+  margin: 15px 30px 92px 30px;
+  .transcript-details {
+    flex: 0 0 80%;
+  }
+}
+
 .speaker-circle {
   align-self: flex-end;
+  flex: 0 0 28px;
   width: 28px;
   height: 28px;
-  background: rgba(238, 110, 255, 0.1);
   border: 1px solid;
   border-radius: 100px;
+  background: rgba(238, 110, 255, 0.1);
 }
 
 .play-button {
@@ -104,8 +103,4 @@
 
 .hidden {
   display: none;
-}
-
-.small {
-  max-width: 250px;
 }

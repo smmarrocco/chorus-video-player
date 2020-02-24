@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="transcript-container">
-      <span
+      <div
         [ngStyle]="{
           'border-color':
             ((trasncript$ | async)?.speaker | lowercase) !== 'cust'
@@ -31,13 +31,12 @@
               : '#EE6EFF'
         }"
         class="speaker-circle"
-      >
-      </span>
+      ></div>
       <div class="transcript-details">
         <p class="speaker">{{ (trasncript$ | async)?.speaker }}</p>
-        <p class="details small">{{ (trasncript$ | async)?.snippet }}</p>
+
         <p class="details">
-          {{ fullTranscript }}
+          {{ (trasncript$ | async)?.snippet }}
         </p>
       </div>
     </div>
