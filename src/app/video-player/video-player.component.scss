@@ -37,7 +37,8 @@
     font-size: 12px;
     // padding-left to line up speaker
     // with transcript details
-    padding-left: 15px;
+    align-self: flex-start;
+    padding-left: 80px;
   }
 
   .video-placeholder {
