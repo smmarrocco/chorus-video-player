@@ -24,19 +24,22 @@
     </div>
     <div class="transcript-container">
       <div
+        class="speaker-circle"
         [ngStyle]="{
           'border-color':
             ((trasncript$ | async)?.speaker | lowercase) !== 'cust'
               ? '#00A7D1'
               : '#EE6EFF'
         }"
-        class="speaker-circle"
       ></div>
-      <div class="transcript-details">
+      <div>
         <p class="speaker">{{ (trasncript$ | async)?.speaker }}</p>
 
-        <p class="details">
-          {{ (trasncript$ | async)?.snippet }}
+        <p
+          *ngFor="let transcript of (trasncript$ | async)?.snippets"
+          class="details"
+        >
+          {{ transcript }}
         </p>
       </div>
     </div>

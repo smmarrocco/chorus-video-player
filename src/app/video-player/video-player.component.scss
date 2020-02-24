@@ -9,6 +9,7 @@
   align-items: center;
   flex-direction: column;
   width: 824px;
+  height: 521px;
 
   background: #ffffff;
   border: 1px solid #d7dade;
@@ -56,16 +57,15 @@
 .transcript-container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-self: flex-start;
 
   margin: 15px 30px 92px 30px;
-  .transcript-details {
-    flex: 0 0 80%;
-  }
 }
 
 .speaker-circle {
   align-self: flex-end;
+
   flex: 0 0 28px;
   width: 28px;
   height: 28px;

@@ -6,6 +6,11 @@ import { Observable, forkJoin, BehaviorSubject, throwError } from "rxjs";
 import { switchMap, map } from "rxjs/operators";
 import { Transcript } from "../models/transcript.model";
 
+export interface Trans {
+  speaker?: string;
+  snippets?: any;
+}
+
 @Component({
   selector: "app-video-player",
   templateUrl: "./video-player.component.html",
@@ -15,7 +20,7 @@ export class VideoPlayerComponent implements OnInit {
   @ViewChild("videoPlayer") videoPlayer: ElementRef;
 
   transcripts: Transcript[];
-  trasncript$ = new BehaviorSubject<Transcript>(undefined);
+  trasncript$ = new BehaviorSubject<Trans>(undefined);
 
   // variables for video player
   isPlaying: boolean = false;
@@ -78,18 +83,47 @@ export class VideoPlayerComponent implements OnInit {
       : this.videoPlayer.nativeElement.pause();
   }
 
-  onTimeUpdate(value) {
-    const currentVideoTime = value.target.currentTime;
-    let speaker: Transcript;
-
-    // loop through entire transcript array to determine if the transcript time is less than currentTime
-    // TODO this is expensive as it will loop through the entire array everytime the time updates
-    this.transcripts.forEach(transcript => {
-      if (transcript.time <= currentVideoTime) {
-        speaker = transcript;
+  updateTranscript(videoTime: number) {
+    this.transcripts.forEach((transcript, index) => {
+      if (
+        index < this.transcripts.length - 1 &&
+        transcript.time <= videoTime &&
+        this.transcripts[index + 1].time >= videoTime
+      ) {
+        this.addTranscript(transcript.speaker, transcript.snippet);
       }
     });
+  }
 
-    this.trasncript$.next(speaker);
+  addTranscript(speaker: string, snippet: string) {
+    let snippets: string[] = [];
+    // check if subject already has values
+    if (this.trasncript$.getValue()) {
+      const transcript = this.trasncript$.getValue();
+      // get only unique values from existing transcript$
+      snippets = Array.from(new Set(transcript.snippets));
+      // prevent adding duplicate values buy checking if snippet param exists
+      if (!snippets.find(item => item === snippet)) {
+        snippets.push(snippet);
+      }
+      // for now, to only show one speaker at a time
+      // clear the array when a new speaker is speaking
+      if (transcript.speaker !== speaker) {
+        snippets = [];
+      }
+      // keep the UI clean by only allowing 3 utturences displayed at a time
+      if (snippets.length > 3) {
+        snippets.splice(3, snippets.length - 1);
+      }
+    }
+    // set the value of the BehaviourSubject for template
+    this.trasncript$.next({
+      speaker: speaker,
+      snippets: snippets
+    });
+  }
+
+  onTimeUpdate(value) {
+    this.updateTranscript(value.target.currentTime);
   }
 }
