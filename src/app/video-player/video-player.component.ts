@@ -85,7 +85,7 @@ export class VideoPlayerComponent implements OnInit {
    * displayed
    * @param videoTime time of the video player
    */
-  updateTranscript(videoTime: number) {
+  private updateTranscript(videoTime: number) {
     this.transcripts.forEach((transcript, index) => {
       if (
         index < this.transcripts.length - 1 &&
@@ -103,7 +103,7 @@ export class VideoPlayerComponent implements OnInit {
    * @param speaker string value of the speaker
    * @param snippet string value of the snippet (utterence)
    */
-  addTranscript(speaker: string, snippet: string) {
+  private addTranscript(speaker: string, snippet: string) {
     let snippets: string[] = [];
     // check if subject already has values
     if (this.trasncript$.getValue()) {
